@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedInsight AI - Healthcare Analytics Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .team-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .integration-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .integration-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .integration-item h3 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .integration-item p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .chat-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f7fafc;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .message.user {
+            background: #e3f2fd;
+            text-align: right;
+        }
+
+        .message.ai {
+            background: #f3e5f5;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .integration-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 MedInsight AI</h1>
+            <div class="team-badge">Team 82 - Prompt Pirates | Healthcare Analytics Assistant</div>
+            <p>Intelligent healthcare analytics powered by MCP integrations</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2>🔗 MCP Integrations</h2>
+                <div class="integration-grid">
+                    <div class="integration-item" onclick="testIntegration('thoughtspot')">
+                        <h3>📊 ThoughtSpot</h3>
+                        <p>Analytics Engine</p>
+                    </div>
+                    <div class="integration-item" onclick="testIntegration('metabase')">
+                        <h3>📈 Metabase</h3>
+                        <p>BI Dashboard</p>
+                    </div>
+                    <div class="integration-item" onclick="testIntegration('drchrono')">
+                        <h3>🏥 DrChrono</h3>
+                        <p>EHR System</p>
+                    </div>
+                    <div class="integration-item" onclick="testIntegration('practice-fusion')">
+                        <h3>📋 Practice Fusion</h3>
+                        <p>EMR Platform</p>
+                    </div>
+                    <div class="integration-item" onclick="testIntegration('slack')">
+                        <h3>💬 Slack</h3>
+                        <p>Notifications</p>
+                    </div>
+                </div>
+                
+                <div id="integration-status"></div>
+                
+                <button class="btn btn-primary" onclick="runFullDemo()">
+                    🚀 Run Complete Demo
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>📊 Real-time Healthcare Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="total-patients">247</div>
+                        <div class="metric-label">Active Patients</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="appointments-today">12</div>
+                        <div class="metric-label">Today's Appointments</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="alerts-count">3</div>
+                        <div class="metric-label">Critical Alerts</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>📈 Weekly Appointment Trends</h3>
+                    <canvas id="appointmentChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🏥 Provider Performance</h3>
+                    <div id="provider-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <h2>🤖 AI Healthcare Assistant</h2>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <strong>MedInsight AI:</strong> Hello! I'm your healthcare analytics assistant. I can help you analyze patient data, create dashboards, and provide insights using our integrated platforms. Try asking me something like "Show me patient trends" or "Create a provider dashboard"
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Ask me about healthcare analytics..." onkeypress="handleEnter(event)">
+                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <div id="demo-results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Mock healthcare data
+        const healthcareData = {
+            patients: [
+                {id: "P001", name: "John Doe", age: 45, condition: "Diabetes", provider: "Dr. Smith"},
+                {id: "P002", name: "Jane Wilson", age: 32, condition: "Hypertension", provider: "Dr. Johnson"},
+                {id: "P003", name: "Bob Miller", age: 58, condition: "Heart Disease", provider: "Dr. Brown"},
+                {id: "P004", name: "Alice Davis", age: 29, condition: "Asthma", provider: "Dr. Wilson"},
+                {id: "P005", name: "Charlie Brown", age: 67, condition: "Arthritis", provider: "Dr. Smith"}
+            ],
+            appointments: [
+                {id: "A001", patient: "John Doe", provider: "Dr. Smith", date: "2025-06-20", status: "scheduled"},
+                {id: "A002", patient: "Jane Wilson", provider: "Dr. Johnson", date: "2025-06-21", status: "completed"},
+                {id: "A003", patient: "Bob Miller", provider: "Dr. Brown", date: "2025-06-22", status: "scheduled"},
+            ]
+        };
+
+        // MCP Integration Functions
+        async function testIntegration(platform) {
+            const statusDiv = document.getElementById('integration-status');
+            statusDiv.innerHTML = `<div class="alert alert-warning">Testing ${platform} integration... <span class="loading"></span></div>`;
+            
+            // Simulate API calls
+            setTimeout(() => {
+                let result = '';
+                switch(platform) {
+                    case 'thoughtspot':
+                        result = `<div class="alert alert-success">✅ ThoughtSpot: Analytics engine connected. Retrieved 1,247 health records for analysis.</div>`;
+                        break;
+                    case 'metabase':
+                        result = `<div class="alert alert-success">✅ Metabase: Dashboard service active. 15 healthcare dashboards available.</div>`;
+                        break;
+                    case 'drchrono':
+                        result = `<div class="alert alert-success">✅ DrChrono: EHR system connected. 247 patient records synchronized.</div>`;
+                        break;
+                    case 'practice-fusion':
+                        result = `<div class="alert alert-success">✅ Practice Fusion: EMR platform integrated. Real-time data streaming active.</div>`;
+                        break;
+                    case 'slack':
+                        result = `<div class="alert alert-success">✅ Slack: Notification system ready. Connected to #healthcare-alerts channel.</div>`;
+                        break;
+                }
+                statusDiv.innerHTML = result;
+            }, 2000);
+        }
+
+        async function runFullDemo() {
+            const resultsDiv = document.getElementById('demo-results');
+            resultsDiv.innerHTML = '<div class="card"><h2>🚀 Full Integration Demo</h2><div id="demo-content"></div></div>';
+            const contentDiv = document.getElementById('demo-content');
+            
+            const steps = [
+                "🔍 Connecting to DrChrono EHR system...",
+                "📊 Fetching patient data from Practice Fusion...",
+                "📈 Running ThoughtSpot analytics...",
+                "📋 Generating Metabase dashboard...",
+                "💬 Sending Slack notifications...",
+                "✅ Integration complete!"
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                contentDiv.innerHTML += `<div class="alert alert-warning">${steps[i]} <span class="loading"></span></div>`;
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                if (i === steps.length - 1) {
+                    contentDiv.innerHTML += `
+                        <div class="alert alert-success">
+                            <h3>🎉 Demo Results:</h3>
+                            <ul>
+                                <li><strong>Patient Data:</strong> Successfully retrieved 247 patient records</li>
+                                <li><strong>Analytics:</strong> Generated 12 health trend insights</li>
+                                <li><strong>Dashboard:</strong> Created facility overview with 8 widgets</li>
+                                <li><strong>Alerts:</strong> Sent 3 critical notifications to healthcare team</li>
+                                <li><strong>Integration Status:</strong> All 5 MCP platforms connected and operational</li>
+                            </ul>
+                        </div>
+                        <div class="alert alert-success">
+                            <strong>Key Insights Discovered:</strong><br>
+                            • 25% increase in appointments this week<br>
+                            • Diabetes patients showing 40% better compliance<br>
+                            • Peak appointment times: 10-11 AM, 2-3 PM<br>
+                            • 3 patients require immediate follow-up
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const messagesDiv = document.getElementById('chatMessages');
+            const userMessage = input.value.trim();
+            
+            if (!userMessage) return;
+            
+            // Add user message
+            messagesDiv.innerHTML += `
+                <div class="message user">
+                    <strong>You:</strong> ${userMessage}
+                </div>
+            `;
+            
+            // Clear input
+            input.value = '';
+            
+            // Add loading message
+            messagesDiv.innerHTML += `
+                <div class="message ai" id="loading-message">
+                    <strong>MedInsight AI:</strong> <span class="loading"></span> Analyzing request and querying healthcare systems...
+                </div>
+            `;
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Process message
+            setTimeout(() => {
+                const response = processUserMessage(userMessage);
+                document.getElementById('loading-message').remove();
+                messagesDiv.innerHTML += `
+                    <div class="message ai">
+                        <strong>MedInsight AI:</strong> ${response}
+                    </div>
+                `;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 2000);
+        }
+
+        function processUserMessage(message) {
+            const msg = message.toLowerCase();
+            
+            if (msg.includes('patient') && (msg.includes('data') || msg.includes('info'))) {
+                return `📊 <strong>Patient Data Analysis (DrChrono + Practice Fusion):</strong><br>
+                        Found 247 active patients in system. Latest updates:<br>
+                        • John Doe (P001): Diabetes checkup scheduled for tomorrow<br>
+                        • Jane Wilson (P002): BP monitoring completed - readings normal<br>
+                        • Bob Miller (P003): Cardiology consult needed - flagged as priority<br>
+                        <br>🔍 <em>Data retrieved from DrChrono EHR and Practice Fusion EMR</em>`;
+            }
+            
+            if (msg.includes('trend') || msg.includes('analytic')) {
+                return `📈 <strong>Health Trends Analysis (ThoughtSpot):</strong><br>
+                        Current insights from healthcare analytics:<br>
+                        • 25% increase in appointments this week vs last week<br>
+                        • Diabetes patients showing 40% better medication compliance<br>
+                        • Peak appointment times: 10-11 AM and 2-3 PM<br>
+                        • Seasonal respiratory conditions up 15%<br>
+                        <br>📊 <em>Analytics powered by ThoughtSpot engine</em>`;
+            }
+            
+            if (msg.includes('dashboard') || msg.includes('report')) {
+                return `📋 <strong>Dashboard Created (Metabase):</strong><br>
+                        Generated comprehensive healthcare dashboard with:<br>
+                        • Patient volume metrics: 247 active, 12 new this week<br>
+                        • Provider workload: Dr. Smith (85 patients), Dr. Johnson (72 patients)<br>
+                        • Appointment status: 15 scheduled, 8 completed, 2 cancelled<br>
+                        • Revenue metrics: $45,230 this month (+12% vs last month)<br>
+                        <br>📊 <em>Interactive dashboard available at: https://metabase.medinsight.ai/facility-overview</em>`;
+            }
+            
+            if (msg.includes('alert') || msg.includes('notification')) {
+                return `🚨 <strong>Critical Alerts (Slack Integration):</strong><br>
+                        Sent notifications to healthcare team:<br>
+                        • HIGH PRIORITY: Patient P003 missed cardiology appointment - needs immediate follow-up<br>
+                        • MEDIUM: Dr. Johnson's schedule at 90% capacity tomorrow<br>
+                        • LOW: Equipment maintenance due for Room 3 next week<br>
+                        <br>💬 <em>Alerts sent to #healthcare-alerts Slack channel</em>`;
+            }
+            
+            if (msg.includes('provider') || msg.includes('doctor')) {
+                return `👩‍⚕️ <strong>Provider Performance Analysis:</strong><br>
+                        Current provider metrics:<br>
+                        • Dr. Smith: 85 patients, 95% satisfaction, 2.3 avg appointment time<br>
+                        • Dr. Johnson: 72 patients, 98% satisfaction, 1.8 avg appointment time<br>
+                        • Dr. Brown: 54 patients, 92% satisfaction, 2.1 avg appointment time<br>
+                        • Dr. Wilson: 36 patients, 96% satisfaction, 1.9 avg appointment time<br>
+                        <br>📈 <em>Data aggregated from all integrated healthcare platforms</em>`;
+            }
+            
+            if (msg.includes('appointment')) {
+                return `📅 <strong>Appointment Management:</strong><br>
+                        Today's appointment overview:<br>
+                        • Total scheduled: 12 appointments<br>
+                        • Completed: 8 (67% completion rate)<br>
+                        • No-shows: 2 (patients contacted via automated system)<br>
+                        • Cancelled: 2 (rescheduled for next week)<br>
+                        <br>⏰ <em>Next appointment: Jane Wilson at 2:30 PM with Dr. Johnson</em>`;
+            }
+            
+            return `🤖 I understand you're asking about "${message}". I can help you with:<br>
+                    • Patient data analysis (DrChrono + Practice Fusion)<br>
+                    • Healthcare trends and analytics (ThoughtSpot)<br>
+                    • Dashboard creation (Metabase)<br>
+                    • Alert notifications (Slack)<br>
+                    • Provider performance metrics<br>
+                    <br>Try asking: "Show me patient trends" or "Create a provider dashboard"`;
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initialize dashboard charts
+        function initializeCharts() {
+            // Simple chart simulation
+            const canvas = document.getElementById('appointmentChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Draw simple bar chart
+            ctx.fillStyle = '#667eea';
+            const data = [45, 52, 38, 61, 48, 55, 42];
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            for (let i = 0; i < data.length; i++) {
+                const height = (data[i] / 70) * 150;
+                ctx.fillRect(i * 50 + 20, 180 - height, 40, height);
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.fillText(days[i], i * 50 + 25, 195);
+                ctx.fillText(data[i], i * 50 + 30, 175 - height);
+                ctx.fillStyle = '#667eea';
+            }
+            
+            // Provider stats
+            const providerStats = document.getElementById('provider-stats');
+            providerStats.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; padding: 15px; border-radius: 8px;">
+                        <h4>Dr. Smith</h4>
+                        <p>85 Patients • 95% Satisfaction</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; padding: 15px; border-radius: 8px;">
+                        <h4>Dr. Johnson</h4>
+                        <p>72 Patients • 98% Satisfaction</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fa709a, #fee140); color: white; padding: 15px; border-radius: 8px;">
+                        <h4>Dr. Brown</h4>
+                        <p>54 Patients • 92% Satisfaction</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; padding: 15px; border-radius: 8px;">
+                        <h4>Dr. Wilson</h4>
+                        <p>36 Patients • 96% Satisfaction</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Auto-update metrics
+        function updateMetrics() {
+            const patients = document.getElementById('total-patients');
+            const appointments = document.getElementById('appointments-today');
+            const alerts = document.getElementById('alerts-count');
+            
+            // Simulate real-time updates
+            setInterval(() => {
+                patients.textContent = Math.floor(Math.random() * 10) + 245;
+                appointments.textContent = Math.floor(Math.random() * 5) + 10;
+                alerts.textContent = Math.floor(Math.random() * 3) + 1;
+            }, 5000);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initializeCharts();
+            updateMetrics();
+            
+            // Add welcome message with demo instructions
+            setTimeout(() => {
+                const messagesDiv = document.getElementById('chatMessages');
+                messagesDiv.innerHTML += `
+                    <div class="message ai">
+                        <strong>MedInsight AI:</strong> 🎯 <strong>Quick Demo Commands:</strong><br>
+                        • "Show me patient data" - View EHR integration<br>
+                        • "Analyze health trends" - ThoughtSpot analytics<br>
+                        • "Create dashboard" - Metabase reports<br>
+                        • "Send alert" - Slack notifications<br>
+                        • "Provider performance" - Staff metrics<br>
+                        <br>All 5 MCP integrations are ready! 🚀
+                    </div>
+                `;
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
